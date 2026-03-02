@@ -22,3 +22,22 @@ Data* Serialize::deserialize(uintptr_t raw)
 {
 	return (reinterpret_cast<Data *>(raw));
 }
+
+Serialize::Serialize()
+{
+}
+
+Serialize::Serialize(const Serialize& other)
+{
+	(void) other;
+}
+
+Serialize::~Serialize()
+{
+}
+
+Serialize& Serialize::operator=(const Serialize& other)
+{
+	(void) other;
+	return (*this);
+}

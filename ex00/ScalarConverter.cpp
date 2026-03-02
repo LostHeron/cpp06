@@ -25,6 +25,21 @@ static void	float_conversion(const std::string& str);
 static void	double_conversion(const std::string& str);
 static void	print_from_char(char c);
 
+ScalarConverter::ScalarConverter()
+{
+}
+
+ScalarConverter::ScalarConverter(const ScalarConverter& other)
+{
+	(void) other;
+}
+
+ScalarConverter& ScalarConverter::operator=(const ScalarConverter& other)
+{
+	(void) other;
+	return (*this);
+}
+
 ScalarConverter::~ScalarConverter()
 {
 }
