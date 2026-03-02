@@ -13,14 +13,16 @@
 #include "ScalarConverter.hpp"
 #include <cctype>
 #include <cstdlib>
+#include <cwctype>
 #include <limits>
+#include <sstream>
 #include <string>
 #include <iostream>
 
 static void	one_byte_string(char c);
 static void	print_int(double d);
 static void	print_char(double d);
-static void	long_string(std::string str);
+static void	long_string(const std::string& str);
 static void	float_conversion(const std::string& str);
 static void	double_conversion(const std::string& str);
 static void	print_from_char(char c);
@@ -67,31 +69,45 @@ void ScalarConverter::convert(const std::string& str)
 	}
 }
 
-static void	long_string(std::string str)
+static std::string	remove_leading_ws(const std::string& str);
+
+static void	long_string(const std::string& str)
 {
-	for (size_t	i = 0; i < str.size(); i++)
+	std::string	str_no_leading_ws = remove_leading_ws(str);
+	for (size_t	i = 0; i < str_no_leading_ws.size(); i++)
 	{
-		str[i] = std::tolower(str[i]);
+		str_no_leading_ws[i] = std::tolower(str_no_leading_ws[i]);
 	}
-	if (str == "inff" || str == "+inff" || str == "-inff"
-		|| str == "nanf" || str == "-nanf" || str == "+nanf"
-		|| (str[str.size() - 1] == 'f'
-			&& (str.find(".") != str.npos || str.find("e") != str.npos)))
+	if (str_no_leading_ws == "inff" || str_no_leading_ws == "+inff" || str_no_leading_ws == "-inff"
+		|| str_no_leading_ws == "nanf" || str_no_leading_ws == "-nanf" || str_no_leading_ws == "+nanf"
+		|| (str_no_leading_ws[str_no_leading_ws.size() - 1] == 'f'
+			&& (str_no_leading_ws.find(".") != str_no_leading_ws.npos || str_no_leading_ws.find("e") != str_no_leading_ws.npos)))
 	{
 		// for float conversion
 		// check of 'inff', '+inff', ... is necessary, because 
-		// conversion of a too large float using strtod will
+		// conversion of a too large float using str_no_leading_wstod will
 		// result in an overflow and so 'inf' or '-inf',
 		// and might accecpt something like
 		// 1241513415....12341f which should not be accepted because
-		// a long string of digits without '.' or 'e' should not accept 'f' at
+		// a long str_no_leading_wsing of digits without '.' or 'e' should not accept 'f' at
 		// the end !
-		float_conversion(str);
+		float_conversion(str_no_leading_ws);
 	}
 	else
 	{
-		double_conversion(str);
+		double_conversion(str_no_leading_ws);
 	}
+}
+
+static std::string	remove_leading_ws(const std::string& str)
+{
+	std::string new_string;
+	size_t	i;
+	for (i = 0; (i < str.size()) && std::iswspace(str[i]); i++)
+		;
+	for (; i < str.size(); i++)
+		new_string.push_back(str[i]);
+	return (new_string);
 }
 
 static void	float_conversion(const std::string& str)
