@@ -6,7 +6,7 @@
 /*   By: jweber <jweber@student.42Lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/02 15:24:57 by jweber            #+#    #+#             */
-/*   Updated: 2026/03/02 15:44:00 by jweber           ###   ########.fr       */
+/*   Updated: 2026/03/02 15:46:25 by jweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "B.hpp"
 #include "C.hpp"
 
-Base * generate(void);
+Base	*generate(void);
 void	identify(Base* p);
 void	identify(Base&	p);
 
