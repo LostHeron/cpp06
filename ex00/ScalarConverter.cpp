@@ -134,7 +134,7 @@ static void	one_byte_string(char c)
 	if ((32 <= c && c < '0')
 		|| ('9' < c && c <= 126))
 	{
-		std::cout << "char = " << c << "\n";
+		std::cout << "char = '" << c << "'\n";
 		print_from_char(c);
 	}
 	else if ('0' <= c && c <= '9')
@@ -149,7 +149,7 @@ static void	print_from_char(char c)
 	int		i = static_cast<int>(c);
 	float	f = static_cast<float>(c);
 	double	d = static_cast<double>(c);
-	std::cout << "int  = " << i << "\n";
+	std::cout << "int = " << i << "\n";
 	std::cout << "float = " << f << "f\n";
 	std::cout << "double = " << d << "\n";
 }
