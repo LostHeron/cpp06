@@ -11,17 +11,31 @@
 /* ************************************************************************** */
 
 #include "ScalarConverter.hpp"
+#include <cctype>
 #include <cstdlib>
 #include <limits>
 #include <string>
 #include <iostream>
-#include <sstream>
+
+static void	one_byte_string(char c);
+static void	print_int(double d);
+static void	print_char(double d);
+static void	long_string(std::string str);
+static void	float_conversion(const std::string& str);
+static void	double_conversion(const std::string& str);
+static void	print_from_char(char c);
 
 ScalarConverter::~ScalarConverter()
 {
 }
 
-static void	print_one_char(char c);
+static void	print_all_impossible(void)
+{
+	std::cout << "char = impossible\n";
+	std::cout << "int = impossible\n";
+	std::cout << "float = impossible\n";
+	std::cout << "double = impossible\n";
+}
 
 void ScalarConverter::convert(const std::string& str)
 {
@@ -30,30 +44,92 @@ void ScalarConverter::convert(const std::string& str)
 	std::cout.precision(1);
 	if (str.size() == 1)
 	{
-		print_one_char(str[0]);
+		one_byte_string(str[0]);
 	}
 	else
 	{
-		double d = std::strtod(str.c_str(), NULL);
-
-		if (32 <= d && d < 127)
-			std::cout << "char = " << static_cast<char>(d) << "\n";
-		else
-			std::cout << "char = impossible\n";
-
-		if (static_cast<double>(std::numeric_limits<int>().min()) - 1 < d
-			&& d < static_cast<double>(std::numeric_limits<int>().max()) + 1)
-			std::cout << "int = " << static_cast<int>(d) << "\n";
-		else
-			std::cout << "int = impossible\n";
-		std::cout << "float = " << static_cast<float>(d) << "f\n";
-		std::cout << "double = " << d << "\n";
+		long_string(str);
 	}
 }
 
-static void	print_from_char(char c);
+static void	long_string(std::string str)
+{
+	for (size_t	i = 0; i < str.size(); i++)
+	{
+		str[i] = std::tolower(str[i]);
+	}
+	if (str == "inff" || str == "+inff" || str == "-inff"
+		|| str == "nanf" || str == "-nanf" || str == "+nanf"
+		|| (str[str.size() - 1] == 'f'
+			&& (str.find(".") != str.npos || str.find("e") != str.npos)))
+	{
+		// for float conversion
+		// check of 'inff', '+inff', ... is necessary, because 
+		// conversion of a too large float using strtod will
+		// result in an overflow and so 'inf' or '-inf',
+		// and might accecpt something like
+		// 1241513415....12341f which should not be accepted because
+		// a long string of digits without '.' or 'e' should not accept 'f' at
+		// the end !
+		float_conversion(str);
+	}
+	else
+	{
+		double_conversion(str);
+	}
+}
 
-static void	print_one_char(char c)
+static void	float_conversion(const std::string& str)
+{
+		const char *start = str.c_str();
+		char *end;
+		float f = std::strtod(start, &end);
+		if (start == end)
+			return (print_all_impossible());
+		std::string remaining = end;
+		//if (str.size() > 1 || (str.size() == 1 && str[0] != 'f'))
+		if (remaining.size() != 1 || remaining[0] != 'f')
+			return (print_all_impossible());
+		print_char(f);
+		print_int(f);
+		std::cout << "float = " << f << "f\n";
+		std::cout << "double = " << static_cast<double>(f) << "\n";
+}
+
+static void	double_conversion(const std::string& str)
+{
+	const char *start = str.c_str();
+	char *end;
+	double d = std::strtod(start, &end);
+	if (start == end)
+		return (print_all_impossible());
+	std::string remaining = end;
+	if (remaining.size() > 0)
+		return (print_all_impossible());
+	print_char(d);
+	print_int(d);
+	std::cout << "float = " << static_cast<float>(d) << "f\n";
+	std::cout << "double = " << d << "\n";
+}
+
+static void	print_char(double d)
+{
+	if (32 <= d && d < 127)
+		std::cout << "char = '" << static_cast<char>(d) << "'\n";
+	else
+		std::cout << "char = impossible\n";
+}
+
+static void	print_int(double d)
+{
+	if (static_cast<double>(std::numeric_limits<int>().min()) - 1 < d
+		&& d < static_cast<double>(std::numeric_limits<int>().max()) + 1)
+		std::cout << "int = " << static_cast<int>(d) << "\n";
+	else
+		std::cout << "int = impossible\n";
+}
+
+static void	one_byte_string(char c)
 {
 	if ((32 <= c && c < '0')
 		|| ('9' < c && c <= 126))
