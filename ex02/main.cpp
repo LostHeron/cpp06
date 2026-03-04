@@ -12,8 +12,8 @@
 
 #include <cstdlib>
 #include <ctime>
+#include <exception>
 #include <iostream>
-#include <typeinfo>
 #include "Base.hpp"
 #include "A.hpp"
 #include "B.hpp"
@@ -84,7 +84,7 @@ void	identify(Base&	p)
 		(void) ref;
 		return ;
 	}
-	catch (std::bad_cast& e)
+	catch (std::exception& e)
 	{
 	}
 
@@ -95,7 +95,7 @@ void	identify(Base&	p)
 		(void) ref;
 		return ;
 	}
-	catch (std::bad_cast& e)
+	catch (std::exception& e)
 	{
 	}
 
@@ -106,7 +106,7 @@ void	identify(Base&	p)
 		(void) ref;
 		return ;
 	}
-	catch (std::bad_cast& e)
+	catch (std::exception& e)
 	{
 	}
 }
